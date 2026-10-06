@@ -62,3 +62,45 @@ test('Should search products by query', async ({ request }) => {
     
     expect(hasMatchingProduct).toBe(true);
 });
+
+test('Should create a new product', async ({ request }) => {
+    const ProductData = {
+        title: 'QA Automation Product',
+        description: 'This is a product created for QA automation testing.',
+        price: 99.99,
+        brand: 'QA Automation',
+        category: 'testing',
+    };
+
+    const response = await request.post('/products/add', {
+        data: ProductData,
+    });
+
+    expect(response.status()).toBe(201);
+
+    const body = await response.json();
+
+    expect(body.id).toBeDefined();
+    expect(body.title).toEqual(ProductData.title);
+    expect(body.description).toContain('QA automation testing');
+    expect(body.description).toBe(ProductData.description);
+    expect(body.price).toEqual(ProductData.price);
+    expect(body.brand).toEqual(ProductData.brand);
+    expect(body.category).toEqual(ProductData.category);
+});
+
+test('Should create a product without a title', async ({ request }) => {
+    const response = await request.post('/products/add', {
+        data: {
+            price: 99.99,
+        },
+    });
+    
+    expect(response.status()).toBe(201);
+
+    const body = await response.json();
+
+    expect(body.id).toEqual(expect.any(Number));
+    expect(body.price).toEqual(99.99);
+
+});
