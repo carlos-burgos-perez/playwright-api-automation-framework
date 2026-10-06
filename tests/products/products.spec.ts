@@ -104,3 +104,53 @@ test('Should create a product without a title', async ({ request }) => {
     expect(body.price).toEqual(99.99);
 
 });
+
+test('Should update a product', async ({ request }) => {
+    const ProductData = {
+        title: 'Updated QA Automation Product',
+        description: 'This is an updated product for QA automation testing.',
+        price: 149.99,
+        brand: 'QA Automation Updated',
+        category: 'testing-updated',
+    };
+
+    const response = await request.put('/products/1', {
+        data: ProductData,
+    });
+
+    expect(response.status()).toBe(200);
+
+    const body = await response.json();
+
+    expect(body.id).toBe(1);
+    expect(body.title).toEqual(ProductData.title);
+    expect(body.price).toEqual(ProductData.price);
+});
+
+test('Should partially update a product', async ({ request }) => {
+    const updateData = {
+        price: 199.99,
+    };
+
+    const response = await request.patch('/products/1', {
+        data: updateData,
+    });
+
+    expect(response.status()).toBe(200);
+
+    const body = await response.json();
+
+    expect(body.id).toBe(1);
+    expect(body.price).toEqual(updateData.price);
+});
+
+test('Should delete a product', async ({ request }) => {
+    const response = await request.delete('/products/1');
+    
+    expect(response.status()).toBe(200);
+
+    const body = await response.json();
+
+    expect(body.id).toBe(1);
+    expect(body.isDeleted).toBe(true);
+});
